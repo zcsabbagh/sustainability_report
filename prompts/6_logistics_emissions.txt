@@ -1,0 +1,12 @@
+Use `totalMilesTraveled`, `totalDieselConsumptionGallons`, and `totalDieselCo2` to create:
+- A summary sentence: "Products traveled a total of X miles, consuming Y gallons of diesel and emitting Z lbs of CO₂."
+- A line or bar chart showing:
+  - Total miles
+  - Diesel usage
+  - CO₂ emissions per shipment
+- A table of logistics mode splits (if available):
+  | Mode | % of Emissions |
+  |------|----------------|
+  | Truck | 100% |
+- Recommendations:
+  - "Consider consolidating shipments or exploring lower-carbon alternatives like rail."

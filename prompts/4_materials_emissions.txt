@@ -1,0 +1,7 @@
+Use `productWeightGrams`, `productWastePercentage`, and `unitProductCFLb` to generate:
+- A summary of material efficiency, including waste per product (`potentialWastePerProductGrams`) and total waste (`totalPotentialWasteGrams`)
+- A sentence stating the material CO₂ contribution per unit and as a percentage of the total
+- A doughnut chart showing:
+  - CO₂ from material use
+  - CO₂ from waste
+- A recommendation: "Consider reducing waste from 4% to 2% through design optimization or recycled input."

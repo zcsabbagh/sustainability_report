@@ -1,0 +1,10 @@
+Create a short bullet list of prioritized actions based on the top 2-3 emission sources. For each one, generate:
+- Estimated CO₂ savings
+- Cost-saving potential (if known)
+- Time to implement (e.g., "immediate", "next quarter")
+
+Example format:
+🔧 Action Plan:
+- Switch to renewable power (↓70% factory CO₂, immediate)
+- Reuse pallets (↓60% packaging CO₂, implement in Q3)
+- Optimize shipment frequency (↓30% logistics CO₂, pilot in Q2)

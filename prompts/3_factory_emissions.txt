@@ -1,0 +1,7 @@
+Using `monthlyPowerCFLb`, `monthlyEmployeeDrivingCFLb`, and factory breakdown percentages (e.g., Power: 94%, Employee: 6%), generate:
+- A pie chart showing the relative contributions of Power, Gas, and Employee Commute
+- A table:
+  | Source | CO₂ (lbs) | % of Factory Emissions |
+  |--------|-----------|------------------------|
+- A recommendation sentence for each component with >10% contribution (e.g., "Power contributes 94% of factory emissions. 
+Switching to solar could reduce this by 70%.")

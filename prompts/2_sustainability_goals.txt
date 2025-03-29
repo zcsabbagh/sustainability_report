@@ -1,0 +1,13 @@
+If a specific sustainability goal is present, include it as a quote. 
+If not, assume a 5% annual CO₂ reduction goal and a 1.25% quarterly target. 
+Use `sumCarbonFootprintInGrams` (or total lbs/MT from the last quarter) and `quantity` to calculate the current footprint. Display:
+- A sentence comparing current footprint to last quarter’s (if available)
+- A table showing:
+  | Metric | Value |
+  |--------|-------|
+  | Total Emissions This Quarter | `X MT CO₂e` |
+  | Target Emissions | `Y MT CO₂e` |
+  | Δ from Goal | `Z MT` or `% Over/Under` |
+
+
+- A progress bar or line chart showing quarterly emissions vs goal over time

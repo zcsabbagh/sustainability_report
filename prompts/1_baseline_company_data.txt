@@ -1,0 +1,8 @@
+Generate a summary table comparing the total number of products listed by the manufacturer (`warehouseTotalProducts`) 
+to the number that have carbon reports. Include a sentence commenting on the coverage percentage 
+(e.g., "Only 20% of products currently have carbon data available"). If coverage is below 50%, recommend increasing reporting coverage. 
+
+
+Include a bar chart showing:
+- Products with reports
+- Products without reports

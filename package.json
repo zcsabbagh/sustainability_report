@@ -1,0 +1,20 @@
+{
+  "name": "sustainability-report-generator",
+  "version": "1.0.0",
+  "description": "AI-powered sustainability report generator",
+  "main": "main.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm main.ts"
+  },
+  "dependencies": {
+    "ai": "^4.2.0",
+    "zod": "^3.22.4",
+    "@ai-sdk/openai": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  }
+}

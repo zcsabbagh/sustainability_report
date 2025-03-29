@@ -1,0 +1,152 @@
+lbToGrams = universalProductConstants.lbToGrams => 453.592 = 453.592
+dieselMPG = universalProductConstants.dieselMpg => 4.51 = 4.51
+minimumTruckingDistanceMi = universalProductConstants.minimumTruckingDistanceMi => 300 = 300
+primaryPowerCostKwh = primaryProductConstants.primaryPowerCostKwh || secondaryProductConstants.secondaryPowerCostKwh => 0.07 = null || 0.07
+primaryGasCostCubicFoot = primaryProductConstants.primaryGasCostCubicFoot || secondaryProductConstants.secondaryGasCostCubicFoot => 0.5 = null || 0.5
+primaryGasCubicFootCo2 = primaryProductConstants.primaryGasCubicFootCo2 || secondaryProductConstants.secondaryGasCubicFootCo2 => 0.0551 = null || 0.0551
+primaryEmployeeDistanceToWorkMiles = primaryProductConstants.primaryEmployeeDistanceToWorkMiles || secondaryProductConstants.secondaryEmployeeDistanceToWorkMiles => 41 = null || 41
+primaryEmployeeIceCarCo2PerMile = primaryProductConstants.primaryEmployeeIceCarCo2PerMile || secondaryProductConstants.secondaryEmployeeIceCarCo2PerMile => 0.404 = null || 0.404
+primaryEmployeeMonthlyWorkDays = primaryProductConstants.primaryEmployeeMonthlyWorkDays || secondaryProductConstants.secondaryEmployeeMonthlyWorkDays => 20 = null || 20
+distanceToCustomer = getTravelDistance(origin, destination, logisticsType) => 280.56097530664744 = getTravelDistance(2001 15th St, Detroit, MI 48216, USA, Chicago, IL 60607, USA, TRUCK)
+warehouseKwhUseMonthly = warehousePowerBill ? warehousePowerBill / primaryPowerCostKwh : 0 => 499999.99999999994 = 35000 ? 35000 / 0.07 : 0
+warehouseGasCostMonthly = warehouseIsGasUsed ? warehouseGasBill / primaryGasCostCubicFoot : 0 => 0 = false ? 0 / 0.5 : 0
+monthlyPowerCFLb = warehouseKwhUseMonthly * (warehousePowerType === PowerType.SOLAR ? secondaryProductConstants.secondaryPowerSolarKwhCo2 : warehousePowerType === PowerType.WIND ? secondaryProductConstants.secondaryPowerWindKwhCo2 : secondaryProductConstants.secondaryPowerTraditionalKwhCo2) => 124999.99999999999 = 499999.99999999994 * (0.25)
+monthlyGasCFLb = warehouseGasCostMonthly * primaryGasCubicFootCo2 => 0 = 0 * 0.0551
+monthlyEmployeeDrivingCFLb = warehouseEmployeeCount * primaryEmployeeDistanceToWorkMiles * primaryEmployeeIceCarCo2PerMile * primaryEmployeeMonthlyWorkDays => 8282 = 25 * 41 * 0.404 * 20
+programPowerCFLb = (monthlyPowerCFLb / warehouseTotalProducts) * durationInMonths || 0 => 1799999.9999999998 = (124999.99999999999 / 5) * 72
+programGasCFLb = (monthlyGasCFLb / warehouseTotalProducts) * durationInMonths || 0 => 0 = (0 / 5) * 72
+programEmployeeCFLb = (monthlyEmployeeDrivingCFLb / warehouseTotalProducts) * durationInMonths || 0 => 119260.8 = (8282 / 5) * 72
+productWeightGrams = productWeightInGrams || 0 => 453.592 = 453.592 || 0
+productWastePercentage = productEstimatedWastePercentage! / 100 || 0 => 0.04 = 4 / 100 || 0
+materialUsedPerProductGrams = productWeightGrams / (1 - productWastePercentage) || 0 => 472.4916666666667 = 453.592 / (1 - 0.04) || 0
+totalMaterialUsedGrams = materialUsedPerProductGrams * quantity || 0 => 708737500 = 472.4916666666667 * 1500000 || 0
+potentialWastePerProductGrams = materialUsedPerProductGrams * productWastePercentage || 0 => 18.89966666666667 = 472.4916666666667 * 0.04 || 0
+totalPotentialWasteGrams = potentialWastePerProductGrams * quantity || 0 => 28349500.000000004 = 18.89966666666667 * 1500000 || 0
+palletsRequired = quantity / productsPerPallet => 1875 = 1500000 / 800
+totalContainerWeightLb = palletsRequired * (containerWeight || 0) => 56250 = 1875 * (30 || 0)
+totalPlasticWrapWeightLb = palletsRequired * (primaryProductConstants.primaryProgramPlasticWrapWeightLb || secondaryProductConstants.secondaryProgramPlasticWrapWeightLb) => 3750 = 1875 * (null || 2)
+totalPackagingWeightLb = palletsRequired * palletWeight + totalContainerWeightLb + totalPlasticWrapWeightLb => 150000 = 1875 * 48 + 56250 + 3750
+unitProductCFLb = materialUsedPerProductGrams * universalProductConstants.gramsToLb * (Number(materialEmissionFactor) || primaryProductConstants.primaryMaterialCompositionCfLb || secondaryProductConstants.secondaryMaterialCompositionCfLb) * quantity => 3046868.8911375003 = 472.4916666666667 * 0.00220462 * (1.95) * 1500000
+palletCFLb = !palletReusable ? palletsRequired * palletWeight * (primaryProductConstants.primaryPalletCompositionCfLb || secondaryProductConstants.secondaryPalletCompositionCfLb) : (palletsRequired * palletWeight * (primaryProductConstants.primaryPalletCompositionCfLb || secondaryProductConstants.secondaryPalletCompositionCfLb)) / (primaryProductConstants.primaryPalletReusabilityCount || secondaryProductConstants.secondaryPalletReusabilityCount) => 135000 = true ? 1875 * 48 * (null || 1.5) : (1875 * 48 * (null || 1.5)) / (null || 10)
+containerCFLb = containerType === CarbonReportContainerType.NONE ? 0 : palletsRequired * containerWeight * (primaryProductConstants.primaryContainerCompositionCfLb || secondaryProductConstants.secondaryContainerCompositionCfLb) => 84375 = PAPER === CarbonReportContainerType.NONE ? 0 : 1875 * 30 * (null || 1.5)
+plasticWrapCFLb = !wrapBinary ? 0 : totalPlasticWrapWeightLb * (primaryProductConstants.primaryPlasticWrapCompositionCfLb || secondaryProductConstants.secondaryPlasticWrapCompositionCfLb) => 0 = true ? 0 : 3750 * (null || 1.5)
+totalShipments = shippingType === CarbonReportShippingMethod.BULK ? Math.ceil(quantity / bulkShipmentUnitCount) : Math.ceil(palletsRequired / (primaryProductConstants.primaryPalletsPerTruck || secondaryProductConstants.secondaryPalletsPerTruck)) => 73 = PALLETS === CarbonReportShippingMethod.BULK ? Math.ceil(1500000 / undefined) : Math.ceil(1875 / (null || 26))
+totalMilesTraveled = totalShipments * distanceToCustomer => 20480.951197385264 = 73 * 280.56097530664744
+totalDieselConsumptionGallons = totalMilesTraveled / dieselMPG => 4541.230864165247 = 20480.951197385264 / 4.51
+totalDieselCo2 = totalDieselConsumptionGallons * (primaryProductConstants.primaryLogisticsDieselGallonCo2 || secondaryProductConstants.secondaryLogisticsDieselGallonCo2) => 94730.07582648705 = 4541.230864165247 * (null || 20.86)
+programPowerCFGrams = programPowerCFLb * lbToGrams => 816465599.9999999 = 1799999.9999999998 * 453.592
+programGasCFGrams = programGasCFLb * lbToGrams => 0 = 0 * 453.592
+programEmployeeCFGrams = programEmployeeCFLb * lbToGrams => 54095744.7936 = 119260.8 * 453.592
+programPalletCFLb = palletCFLb || 0 => 135000 = 135000 || 0
+programContainerCFLb = containerCFLb || 0 => 84375 = 84375 || 0
+programPlasticWrapCFLb = plasticWrapCFLb || 0 => 0 = 0 || 0
+sumUnitPackagingGrams = (programPalletCFLb + programContainerCFLb + programPlasticWrapCFLb) * lbToGrams => 99506745 = (135000 + 84375 + 0) * 453.592
+unitCarbonFootprintLb = (programPowerCFLb + programGasCFLb + programEmployeeCFLb + unitProductCFLb + programPalletCFLb + programContainerCFLb + programPlasticWrapCFLb + totalDieselCo2) / quantity => 3.520156511309325 = (1799999.9999999998 + 0 + 119260.8 + 3046868.8911375003 + 135000 + 84375 + 0 + 94730.07582648705) / 1500000
+primaryLogisticsDieselGallonCO2 = primaryProductConstants.primaryLogisticsDieselGallonCo2 || 0 => 0 = null || 0
+secondaryLogisticsDieselGallonCO2 = secondaryProductConstants.secondaryLogisticsDieselGallonCo2 || 0 => 20.86 = 20.86 || 0
+logisticsSecondaryTotalCO2 = (minimumTruckingDistanceMi / dieselMPG) * (primaryLogisticsDieselGallonCO2 || secondaryLogisticsDieselGallonCO2) => 1387.5831485587582 = (300 / 4.51) * (0 || 20.86)
+sumUnitLogisticsGrams = logisticsType === CarbonReportLogisticsType.TRUCK ? totalDieselCo2 * lbToGrams : totalDieselCo2 * lbToGrams + logisticsSecondaryTotalCO2 * lbToGrams => 42968804.55428791 = TRUCK === CarbonReportLogisticsType.TRUCK ? 94730.07582648705 * 453.592 : 94730.07582648705 * 453.592 + 1387.5831485587582 * 453.592
+sumUnitWarehouseGrams = programPowerCFGrams + programGasCFGrams + programEmployeeCFGrams => 870561344.7935998 = 816465599.9999999 + 0 + 54095744.7936
+warehouseAdditionalityPowerPercent = programPowerCFGrams / sumUnitWarehouseGrams => 0.937861076514458 = 816465599.9999999 / 870561344.7935998
+warehouseAdditionalityGasPercent = programGasCFGrams / sumUnitWarehouseGrams => 0 = 0 / 870561344.7935998
+warehouseAdditionalityEmployeePercent = programEmployeeCFGrams / sumUnitWarehouseGrams => 0.062138923485541946 = 54095744.7936 / 870561344.7935998
+packagingAdditionalityPalletPercent = (programPalletCFLb * lbToGrams) / sumUnitPackagingGrams => 0.6153846153846154 = (135000 * 453.592) / 99506745
+packagingAdditionalityContainerPercent = (programContainerCFLb * lbToGrams) / sumUnitPackagingGrams => 0.38461538461538464 = (84375 * 453.592) / 99506745
+packagingAdditionalityWrapPercent = (programPlasticWrapCFLb * lbToGrams) / sumUnitPackagingGrams => 0 = (0 * 453.592) / 99506745
+sumUnitMaterialGrams = unitProductCFLb * lbToGrams => 1382035354.068841 = 3046868.8911375003 * 453.592
+sumCarbonFootprintInGrams = sumUnitMaterialGrams + sumUnitWarehouseGrams + sumUnitLogisticsGrams + sumUnitPackagingGrams => 2395072248.416729 = 1382035354.068841 + 870561344.7935998 + 42968804.55428791 + 99506745
+materialCarbonFootprintPercentOfTotal = ((programPowerCFLb / quantity) * lbToGrams) / sumCarbonFootprintInGrams => 2.2726262239471827e-7 = ((1799999.9999999998 / 1500000) * 453.592) / 2395072248.416729
+totalAdditionality = 1 - materialCarbonFootprintPercentOfTotal => 0.9999997727373776 = 1 - 2.2726262239471827e-7
+logisticsAdditionalityPrimaryPercent = logisticsType === CarbonReportLogisticsType.TRUCK ? (totalDieselCo2 * lbToGrams) / sumUnitLogisticsGrams : (totalDieselCo2 * lbToGrams) / (sumUnitLogisticsGrams + logisticsSecondaryTotalCO2 * lbToGrams) => 1 = TRUCK === CarbonReportLogisticsType.TRUCK ? (94730.07582648705 * 453.592) / 42968804.55428791 : (94730.07582648705 * 453.592) / (42968804.55428791 + 1387.5831485587582 * 453.592)
+logisticsAdditionalitySecondaryPercent = logisticsType === CarbonReportLogisticsType.TRUCK ? 0 : ((logisticsSecondaryTotalCO2 / quantity) * lbToGrams) / (sumUnitLogisticsGrams + logisticsSecondaryTotalCO2 * lbToGrams) => 0 = TRUCK === CarbonReportLogisticsType.TRUCK ? 0 : ((1387.5831485587582 / 1500000) * 453.592) / (42968804.55428791 + 629396.6155210643)
+logisticsSecondaryTotalCO2Grams = logisticsSecondaryTotalCO2 * lbToGrams => 629396.6155210643 = 1387.5831485587582 * 453.592
+unitMaterialCfLbGrams = sumUnitMaterialGrams / quantity => 921.3569027125607 = 1382035354.068841 / 1500000
+unitWarehouseCfLbGrams = sumUnitWarehouseGrams / quantity => 580.3742298624 = 870561344.7935998 / 1500000
+unitLogisticsCfLbGrams = sumUnitLogisticsGrams / quantity => 28.645869702858608 = 42968804.55428791 / 1500000
+unitPackagingCfLbGrams = sumUnitPackagingGrams / quantity => 66.33783 = 99506745 / 1500000
+
+        "required" : [ "declaredUnit", "unitaryProductAmount", "productMassPerDeclaredUnit", "exemptedEmissionsPercent", "geographyRegionOrSubregion", "referencePeriodStart", "referencePeriodEnd", "crossSectoralStandardsUsed", "productOrSectorSpecificRules", "extWBCSD_characterizationFactors", "extTFS_allocationWasteIncineration", "secondaryEmissionFactorSources", "extWBCSD_packagingEmissionsIncluded", "pcfExcludingBiogenic" ]
+
+  "required" : [ "id", "specVersion", "partialFullPcf", "version", "created", "extWBCSD_pfStatus", "companyName", "companyIds", "productIds", "extWBCSD_productCodeCpc", "productName", "pcf" ]
+
+
+{
+  NEED - Help -- "specVersion" : "urn:io.catenax.pcf:datamodel:version:7.0.0",
+  NEED - Help -- "companyIds" : [ "telnet://192.0.2.16:80/", "ftp://ftp.is.co.za/rfc/rfc1808.txt", "http://www.ietf.org/rfc/rfc2396.txt", "http://www.wikipedia.org", "ftp://ftp.is.co.za/rfc/rfc1808.txt" ],
+  NEED - Help -- "extWBCSD_productCodeCpc" : "011-99000",
+  NEED - Good -- "created" : "2022-05-22T21:47:32Z",
+  NEED - Good -- "companyName" : "My Corp",
+  NEED - Good -- "extWBCSD_pfStatus" : "Active",
+  NEED - Good -- "version" : 0,
+  NEED - Good -- "productName" : "My Product Name",
+  NEED? - "pcf" : {
+    "biogenicCarbonEmissionsOtherThanCO2" : 1.0,
+    "distributionStagePcfExcludingBiogenic" : 1.5,
+    Good -- 0.0 -- "biogenicCarbonWithdrawal" : 0.0,
+    "distributionStageBiogenicCarbonEmissionsOtherThanCO2" : 1.0,
+    Good -- "extWBCSD_allocationRulesDescription" : "In accordance with Catena-X PCF Rulebook",
+    Good -- "exemptedEmissionsDescription" : "No exemption",
+    "distributionStageFossilGhgEmissions" : 0.5,
+    NEED - Good -- "exemptedEmissionsPercent" : 0.0,
+    Good -- "geographyCountrySubdivision" : "US-NY",
+    "extTFS_luGhgEmissions" : 0.3,
+    Good -- 0.0 -- "distributionStageBiogenicCarbonWithdrawal" : 0.0,
+    Good -- SUM unit grams -- "pcfIncludingBiogenic" : 1.0,
+    Good -- "aircraftGhgEmissions" : 0.0,
+    NEED - Good -- sum part weight grams -- "productMassPerDeclaredUnit" : 0.456,
+    "productOrSectorSpecificRules" : [ {
+      NEED - Good -- "extWBCSD_operator" : "PEF",
+      NEED - Good -- "productOrSectorSpecificRules" : [ {
+        NEED - Good -- "ruleName" : "urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0"
+      } ],
+      Good -- "extWBCSD_otherOperatorName" : "NSF"
+    } ],
+    NEED - Good -- "extTFS_allocationWasteIncineration" : "cut-off",
+    NEED - MEH -- Remove Biogenic? -- "pcfExcludingBiogenic" : 2.0,
+    NEED - Good -- "referencePeriodEnd" : "2022-12-31T23:59:59Z",
+    NEED - Good -- "extWBCSD_characterizationFactors" : "AR5",
+    NEED - MEH -- "secondaryEmissionFactorSources" : [ {
+      NEED - MEH -- "secondaryEmissionFactorSource" : "ecoinvent 3.8" ------ https://support.ecoinvent.org/properties
+    } ],
+    NEED - Good -- "unitaryProductAmount" : 1000.0,
+    NEED - Good -- "declaredUnit" : "liter",
+    NEED - Good -- "referencePeriodStart" : "2022-01-01T00:00:01Z",
+    NEED - Good -- "geographyRegionOrSubregion" : "Africa",
+    MEH -- "fossilGhgEmissions" : 0.5,
+    Good -- "distributionStageAircraftGhgEmissions" : 0.0,
+    Good -- "boundaryProcessesDescription" : "Electricity consumption included as an input in the production phase",
+    Good -- "geographyCountry" : "DE",
+    Good -- unitPackagingcflbGrams -- "extWBCSD_packagingGhgEmissions" : 0,
+    Good -- 0.0 -- "dlucGhgEmissions" : 0.4,
+    "carbonContentTotal" : 2.5,
+    BAD -- "extTFS_distributionStageLuGhgEmissions" : 1.1,
+    Good -- Calculate via dateset above -- "primaryDataShare" : 56.12,
+    "dataQualityRating" : {
+      "completenessDQR" : 2.0,
+      "technologicalDQR" : 2.0,
+      "geographicalDQR" : 2.0,
+      "temporalDQR" : 2.0,
+      "reliabilityDQR" : 2.0,
+      "coveragePercent" : 100
+    },
+    NEED - Good -- "extWBCSD_packagingEmissionsIncluded" : true,
+    MEH -- "extWBCSD_fossilCarbonContent" : 0.1,
+    NEED - Good -- "crossSectoralStandardsUsed" : [ {
+      NEED - Good -- "crossSectoralStandard" : "ISO Standard 14067"
+    } ],
+    "extTFS_distributionStageDlucGhgEmissions" : 1.0,
+    "distributionStagePcfIncludingBiogenic" : 0.0,
+    "carbonContentBiogenic" : 0.0
+  },
+  NEED - Good -- "partialFullPcf" : "Cradle-to-gate",
+  NEED - Help -- "productIds" : [ "telnet://192.0.2.16:80/", "http://www.wikipedia.org", "telnet://192.0.2.16:80/", "ftp://ftp.is.co.za/rfc/rfc1808.txt" ],
+  Good -- "validityPeriodStart" : "2022-01-01T00:00:01Z",
+  Good -- "comment" : "Additional explanatory information not reflected by other attributes",
+  NEED - Good -- "id" : "3893bb5d-da16-4dc1-9185-11d97476c254",
+  Good -- "validityPeriodEnd" : "2022-12-31T23:59:59Z",
+  Good -- "pcfLegalStatement" : "This PCF (Product Carbon Footprint) is for information purposes only. It is based upon the standards mentioned above.",
+  Good -- "productDescription" : "Ethanol, 95% solution",
+  "precedingPfIds" : [ {
+    Good -- "id" : "3893bb5d-da16-4dc1-9185-11d97476c254"
+  } ]
+}

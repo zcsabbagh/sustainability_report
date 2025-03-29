@@ -1,0 +1,8 @@
+Using `programPalletCFLb`, `programContainerCFLb`, and `programPlasticWrapCFLb`, generate:
+- A table showing CO₂ contributions and % split
+  | Component | CO₂ (lbs) | % of Packaging Emissions |
+- A pie chart visualizing the above
+- A sentence highlighting the most significant contributor (e.g., "Pallets make up 62% of packaging emissions.")
+- Recommendation examples:
+  - "Switch to reusable pallets to reduce this by 90%."
+  - "Explore using lightweight recycled containers."
